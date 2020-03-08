@@ -51,7 +51,6 @@ public:
         tmp->doc_id = id;
         tmp->doc_total_pages = pages;
         tmp->next = NULL;
-
         if(head == NULL)
         {
             head = tmp;
@@ -64,42 +63,19 @@ public:
         }
     } // end of add_node function
 
-    document_Struct * get_doc_with_ID (int id)
-    {
-        struct document_Struct* ptr;
-        ptr = head;
-        while (ptr != NULL) {
-            if(ptr->doc_id = id)
-            {
-                return ptr;
-            }
-            else
-            {
-                ptr = ptr->next;
-            }
-        } // End of while loop
-        return NULL;
-    } // end of get_doc_with_ID method
-
-
     void delete_this_doc( document_Struct *n)
     {
-        // When node to be deleted is head node
         if(head == n)
         {
             if(head->next == NULL)
             {
-                //cout << "All docs are deleted"<<endl;
                 head = NULL;
                 return;
             }
             head->doc_id = head->next->doc_id;
             head->doc_total_pages = head->next->doc_total_pages;
-            // store address of next node
             n = head->next;
-            // Remove the link of next node
             head->next = head->next->next;
-            // free memory
             free(n);
             return;
         }
@@ -114,13 +90,10 @@ public:
             cout << "\nGiven node is not present in Linked List";
             return;
         }
-        // Remove node from Linked List
         prev->next = prev->next->next;
         free(n);
         return;
     }
-
-
 
     document_Struct * get_doc_head ()
     {
@@ -132,7 +105,6 @@ public:
         }
         return NULL;
     } // end of get_doc_with_ID method
-
 
     void display_doc() {
         struct document_Struct* ptr;
@@ -184,12 +156,9 @@ public:
             tmp->left_capacity = max ;
             tmp->inifinity = false;
         }
-
         tmp->current_load =0.0;
-
         tmp->docs = new document_list();
         tmp->next = NULL;
-
         if(head == NULL)
         {
             head = tmp;
@@ -201,65 +170,6 @@ public:
             tail = tail->next;
         }
     } // end of add_node function
-
-
-    //int get_left_over_capacity(int printerID)
-    int get_left_over_capacity(printer_struct *printer)
-    {
-        if(head == printer)
-        {
-            return head->left_capacity;
-        }
-        // find the previous node
-        printer_struct *prev = head;
-        while(prev->next != NULL && prev->next != printer)
-        {
-            prev = prev->next;
-        }
-        if(prev->next == NULL)
-        {
-            cout << "\nGiven node is not present in Linked List";
-            return 0;
-        }
-        return prev->left_capacity;
-    }
-
-    int get_current_Load(int printerID)
-    {
-        struct printer_struct* ptr;
-        ptr = head;
-        while(ptr != NULL)
-        {
-            if(ptr->printer_id == printerID)
-            {
-                return ptr->current_load;
-            }
-            else
-            {
-                ptr = ptr->next;
-            }
-        } // end of while loop
-        return -1; // error to find printer of that id
-    }
-
-    int get_max_Capacity(int printerID)
-    {
-        struct printer_struct* ptr;
-        ptr = head;
-        while(ptr != NULL)
-        {
-            if(ptr->printer_id == printerID)
-            {
-                return ptr->max_capacity;
-            }
-            else
-            {
-                ptr = ptr->next;
-            }
-        } // end of while loop
-        return -1; // error to find printer of that id
-    }
-
 
     int add_printer_Docs(int printerID, int docID, int docPages)
     {
@@ -280,7 +190,6 @@ public:
                     ptr->left_capacity = left;
                     ptr->current_load = (int)ll;
                 }
-                cout<<" Processing Doc id : "<<docID<<" and pages: "<<docPages<<" to printer ID: "<<ptr->printer_id<<" with load : "<<ll<<" and left capacity: "<<left <<endl;
                 ofstream output;
                 output.open (OutFile_Name, ios::app );
                 if ( !output.is_open() )
@@ -292,8 +201,6 @@ public:
                     output << "D"<<docID<<", P"<<printerID <<endl;
                     output.close();
                 }
-
-
                 return 1;
             }
             else
@@ -327,7 +234,6 @@ struct user_struct
     int numberOfDocs;
     int docCounter;
     document_list *docs;
-
     user_struct *next;
 };
 
@@ -350,9 +256,7 @@ public:
         tmp->numberOfDocs = docsNo;
         tmp->docCounter = 0;
         tmp->docs = new document_list();
-
         tmp->next = NULL;
-
         if(head == NULL)
         {
             head = tmp;
@@ -369,6 +273,7 @@ public:
     {
         return head;
     }
+
     void  add_user_Docs(int userID, int docID, int docPages)
     {
         struct user_struct* ptr;
@@ -377,8 +282,6 @@ public:
         {
             if(ptr->user_id == userID)
             {
-                //                cout<<" congraulations you find me.";
-                //cout<<endl<<" user ID " <<userID <<" Doc Counter : "<<ptr->docCounter<<" Doc id: "<<docID<<" with pages: "<<docPages <<" ,\t" ;
                 ptr->docs->add_doc(docID, docPages);
                 ptr->docCounter++;
                 break;
@@ -390,11 +293,8 @@ public:
         } // end of while loop
     } // end of add_user_Docs
 
-
-
     void delete_this_user( user_struct *n)
     {
-        // When node to be deleted is head node
         if(head == n)
         {
             if(head->next == NULL)
@@ -407,13 +307,9 @@ public:
             head->priority = head->next->priority;
             head->numberOfDocs = head->next->numberOfDocs;
             head->docCounter = head->next->docCounter;
-            //head->docs = new document_list() {head->next->docs};
             head->docs = head->next->docs;
-            // store address of next node
             n = head->next;
-            // Remove the link of next node
             head->next = head->next->next;
-            // free memory
             free(n);
             return;
         }
@@ -428,14 +324,10 @@ public:
             cout << "\nGiven node is not present in Linked List";
             return;
         }
-        // Remove node from Linked List
-        //cout<<" removing user (which is not head) id: "<<prev->user_id<<endl;
         prev->next = prev->next->next;
         free(n);
         return;
     }
-
-
 
     void display_users() {
         struct user_struct* ptr;
@@ -450,7 +342,6 @@ public:
             ptr = ptr->next;
         } // End of while loop
     } // end of display function
-
 } users_obj;
 
 //***************************** File Lines handlers Methods ********************************************
@@ -462,7 +353,6 @@ void process_line_of_user_File(string line)
     int docIDD = 0;
     int docPagess = 0;
     int count = 0;
-    //cout << line << endl;
     int n = 0;
     istringstream ss(line);
     do {
@@ -487,10 +377,8 @@ void process_line_of_user_File(string line)
         {
             istringstream sstream(word);
             sstream >> userTotalDocs ;
-            //cout<<" User id: "<<userIDD<<" Priority: "<<userPriority <<" total Docs: "<<userTotalDocs<<" \t\t";
             users_obj.add_user(userIDD, userPriority, userTotalDocs);
         }
-
         else if(count > 2 && (word != "")) // docs
         {
             if((char_array[0] == 'd' || char_array[0] == 'D'))
@@ -504,13 +392,11 @@ void process_line_of_user_File(string line)
             {
                 istringstream sstream(word);
                 sstream >> docPagess ;
-                //                cout<<" Doc id: "<<docIDD<<" with pages: "<<docPagess <<" ,\t";
                 users_obj.add_user_Docs(userIDD, docIDD, docPagess);
             }
         }
         count++;
     } while (ss);
-    //cout <<endl<<endl;
 }
 
 void process_line_of_printer_File(string line)
@@ -518,13 +404,11 @@ void process_line_of_printer_File(string line)
     int prterIDD = 0;
     int prterCapacity = 0;
     int count = 0;
-    //cout << line << endl;
     int n = 0;
     istringstream ss(line);
     do {
         string word;
         ss >> word;
-        //cout <<" word indx : "<<count <<" :: " << word << endl;
         n = word.length();
         char char_array[n + 1];
         strcpy(char_array, word.c_str());
@@ -539,12 +423,10 @@ void process_line_of_printer_File(string line)
         {
             istringstream sstream(word);
             sstream >> prterCapacity ;
-            //cout<<" printer id: "<<prterIDD <<" with Capacity : "<< prterCapacity <<" ,\t";
             printer_obj.add_printer(prterIDD, prterCapacity);
         }
         count++;
     } while (ss);
-    //cout <<endl<<endl;
 }
 
 //***************************** Printer Spooler ********************************************
@@ -554,15 +436,7 @@ void PrinterSpooler()
     struct user_struct *ptr;
     struct user_struct *user_with_maxPriority;
     int current_priority = 0;
-
-    //struct printer_struct *printer_main_ptr = printer_obj.get_printer_head();
     struct printer_struct *printer_ptr = printer_obj.get_printer_head();
-
-//    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-//    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-//    cout<<"++ User ID \t++ Doc ID \t++ DocPages \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
-    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-
     while (main_ptr != NULL) {
         ptr = main_ptr;
         current_priority = 0;
@@ -575,29 +449,18 @@ void PrinterSpooler()
             }
             ptr = ptr->next;
         } // end of child while loop
-
-
-        cout<<"\n\n User id: "<<user_with_maxPriority->user_id<<" having total docs : "<<user_with_maxPriority->docCounter<<" and Docs are : "<<endl;
         user_with_maxPriority->docs->display_doc();
-        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-
-
         printer_ptr = printer_obj.get_printer_head();
-
         int lload = printer_ptr->current_load;
         int total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
         int lleft = printer_ptr->left_capacity;
         int max_capacity_ofPrinter = printer_ptr->max_capacity;
-
-        cout<<" printer head max cap : "<<max_capacity_ofPrinter<<" with load "<<lload<<" and left cap : "<<lleft<<endl<<endl<<endl;
         while(printer_ptr !=  NULL)
         {
             if((lload < 50) && ((total_Page  < lleft) || (lleft == -1)))
             {
-
                 document_Struct *dd = user_with_maxPriority->docs->get_doc_head();
                 while (dd != NULL) {
-                    cout<<" User id : "<<user_with_maxPriority->user_id<<" -> printer id "<<printer_ptr->printer_id <<" left Cap : "<< lleft <<" with load "<<lload<<endl;
                     if((lload < 50) && (total_Page < lleft))
                     {
                         ofstream output;
@@ -611,19 +474,12 @@ void PrinterSpooler()
                             output << "U"<<user_with_maxPriority->user_id<<", ";
                             output.close();
                         }
-
                         int iddd = printer_ptr->printer_id;
                         int doci = dd->doc_id;
                         int docp = dd->doc_total_pages;
                         printer_obj.add_printer_Docs(iddd, doci, docp);
-
-                        cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-                        cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-
-
                         user_with_maxPriority->docs->delete_this_doc(dd);
                         dd = user_with_maxPriority->docs->get_doc_head();
-
                         if(dd != NULL)
                         {
                             printer_ptr = printer_obj.get_printer_head();
@@ -638,29 +494,23 @@ void PrinterSpooler()
                     }
                     else
                     {
-                        cout<<"\n\n +-+-+-+-+-+-+--+-+-+-+-+-+-+-else statement and printer is changed ";
                         printer_ptr = printer_ptr->next;
                         if(printer_ptr != NULL)
                         {
-                            cout<<" in If statement "<<endl;
                             lload = printer_ptr->current_load;
                             total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
                             lleft = printer_ptr->left_capacity;
                         }
                         else {
-                            cout<<" in else statement "<<endl;
                             lload = 0;
                             total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
                             lleft = 1000000; //printer_ptr->left_capacity;
                         }
                     }
                 } // end of while loop where doc are not null
-
-                cout<<"\n\n\t\t\t user docs are NULL now"<<endl;
                 break;
             } // end of if where lload < 50
             else {
-                cout<<"------->>>>>>>>>>>>>> current printer load is greater then 50 now changing to the next printer "<<endl;
                 printer_ptr = printer_ptr->next;
                 if(printer_ptr != NULL)
                 {
@@ -669,20 +519,10 @@ void PrinterSpooler()
                     lleft = printer_ptr->left_capacity;
                 }
             }
-
         } // end of while loop where printer is null
-
-
-        cout<<"Now deleting user of id : "<<user_with_maxPriority->user_id<<endl;
         users_obj.delete_this_user(user_with_maxPriority);
-        cout<<"user deleted "<<endl;
-
         main_ptr = users_obj.get_head();
-
     } // end of parent while loop
-    //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-    //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-
 }
 
 
@@ -710,10 +550,6 @@ int main()
         cout<<" All user data read and filled in linked-list."<<endl;
     }
     cout<<"************************************************************************************************"<<endl;
-    //cout<<" Now showing user linked list "<<endl;
-    //users_obj.display_users();
-
-
     cout<<endl<<endl<<endl;
     cout<<"################################################################################################"<<endl;
     cout<<"################################################################################################"<<endl;
@@ -733,9 +569,6 @@ int main()
         cout<<" All Printer data read and filled in linked-list."<<endl;
     }
     cout<<"################################################################################################"<<endl;
-    //cout<<" Now showing Printers linked list "<<endl;
-    //printer_obj.display();
-
     cout<<endl<<endl<<endl;
     cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl;
     ofstream output;
@@ -750,18 +583,11 @@ int main()
     }
     output.close();
     cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl<<endl;
-
-
     cout<<"Now Spooling "<<endl;
     PrinterSpooler();
-
     cout<<endl<<endl<<" Output file generated .";
     cout<<endl<<endl<<endl<<"************************************************************************************************"<<endl;
     cout<<"******************************************* Thank You ******************************************"<<endl;
     cout<<"************************************************************************************************"<<endl;
     return 0;
 } // end of main class
-
-
-
-
