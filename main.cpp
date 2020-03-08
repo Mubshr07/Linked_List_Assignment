@@ -135,7 +135,7 @@ public:
 struct printer_struct
 {
     int printer_id ;
-    float current_load ;
+    int current_load ;
     int max_capacity ;
     int left_capacity ;
     document_list *docs;
@@ -176,23 +176,25 @@ public:
     } // end of add_node function
 
 
-    int get_left_over_capacity(int printerID)
+    //int get_left_over_capacity(int printerID)
+    int get_left_over_capacity(printer_struct *printer)
     {
-        struct printer_struct* ptr;
-        //struct document_Struct *doc_ptr;
-        ptr = head;
-        while(ptr != NULL)
+        if(head == printer)
         {
-            if(ptr->printer_id == printerID)
-            {
-                return ptr->left_capacity;
-            }
-            else
-            {
-                ptr = ptr->next;
-            }
-        } // end of while loop
-        return -1; // error to find printer of that id
+            return head->left_capacity;
+        }
+        // find the previous node
+        printer_struct *prev = head;
+        while(prev->next != NULL && prev->next != printer)
+        {
+            prev = prev->next;
+        }
+        if(prev->next == NULL)
+        {
+            cout << "\nGiven node is not present in Linked List";
+            return 0;
+        }
+        return prev->left_capacity;
     }
 
     int get_current_Load(int printerID)
@@ -240,14 +242,20 @@ public:
         {
             if(ptr->printer_id == printerID)
             {
-                //ptr->docs->add_doc( docID, docPages);
+                ptr->docs->add_doc( docID, docPages);
+                int max = ptr->max_capacity;
+                float ll = ptr->current_load;
+                int left = ptr->left_capacity;
+                ll = (ll + ( (docPages *100 ) / max ));
+                ptr->left_capacity = left - docPages;
+                ptr->current_load = (int)ll;
+                left = left - docPages;
+                cout<<" Passing Doc id : "<<docID<<" and pages: "<<docPages<<" to printer ID: "<<ptr->printer_id<<" with load : "<<ll<<" and left capacity: "<<left<<" and current docs load : " <<endl;
+                //ptr->current_load = (ptr->current_load + ( (docPages / ptr->max_capacity) * 100 ));
 
-                cout<<" Passing Doc pages: "<<docPages<<" now divided by 100 : "<<(docPages / 100)<<" and now multiolied with 100 : "<< ((docPages / 100) * 100)<<endl;
+                //cout<<"\n current left over : ("<<left<<") With load : ("<<ll<<") with max cap : "<<max<<endl;
 
 
-                //cout<<" Passing Doc id :"<<docID<<" and pages: "<<docPages<<" to printer ID: "<<ptr->printer_id<<" with load : "<<ptr->current_load<<" and max capacity: "<<ptr->max_capacity<<" and current docs load : "<<((docPages / ((int)(ptr->max_capacity))) * 100 )<<endl;
-                ptr->current_load = (ptr->current_load + ( (docPages / ptr->max_capacity) * 100 ));
-                ptr->left_capacity = ptr->left_capacity - docPages;
                 return 1;
             }
             else
@@ -412,6 +420,7 @@ public:
 
 
 
+//***************************** File Lines handlers Methods ********************************************
 void process_line_of_user_File(string line)
 {
     int userIDD = 0;
@@ -506,6 +515,7 @@ void process_line_of_printer_File(string line)
 }
 
 
+//***************************** Printer Spooler ********************************************
 void PrinterSpooler()
 {
     struct user_struct *main_ptr = users_obj.get_head();
@@ -515,9 +525,11 @@ void PrinterSpooler()
 
     //struct printer_struct *printer_main_ptr = printer_obj.get_printer_head();
     struct printer_struct *printer_ptr = printer_obj.get_printer_head();
-    int left_over_capacity_ofPrinter = 0;
-    int max_capacity_ofPrinter = 0;
-    int current_Printer_Load = 100;
+
+    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+    cout<<"++ User ID \t++ Doc ID \t++ DocPages \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
+    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
 
     while (main_ptr != NULL) {
         ptr = main_ptr;
@@ -533,52 +545,162 @@ void PrinterSpooler()
         } // end of child while loop
 
 
-        //cout<<"\n\n User id: "<<user_with_maxPriority->user_id<<" having total docs : "<<user_with_maxPriority->docCounter<<" and Docs are : "<<endl;
-        //user_with_maxPriority->docs->display_doc();
-        //cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+        cout<<"\n\n User id: "<<user_with_maxPriority->user_id<<" having total docs : "<<user_with_maxPriority->docCounter<<" and Docs are : "<<endl;
+        user_with_maxPriority->docs->display_doc();
+        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<endl;
 
 
         printer_ptr = printer_obj.get_printer_head();
-        left_over_capacity_ofPrinter = 0;
-        max_capacity_ofPrinter = 0;
-        current_Printer_Load = 100;
 
+        int lload = printer_ptr->current_load;
+        int total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
+        int lleft = printer_ptr->left_capacity;
+        int max_capacity_ofPrinter = printer_ptr->max_capacity;
+
+        cout<<" printer head max cap : "<<max_capacity_ofPrinter<<" with load "<<lload<<" and left cap : "<<lleft<<endl<<endl<<endl;
+        while(printer_ptr !=  NULL)
+        {
+            if((lload < 50) && ((total_Page  < lleft) || (lleft == -1)))
+            {
+
+                document_Struct *dd = user_with_maxPriority->docs->get_doc_head();
+                while (dd != NULL) {
+                    cout<<" User id : "<<user_with_maxPriority->user_id<<" -> printer id "<<printer_ptr->printer_id <<" left Cap : "<< lleft <<" with load "<<lload<<endl;
+                    if((lload < 50) && (total_Page < lleft))
+                    {
+                        int iddd = printer_ptr->printer_id;
+                        int doci = dd->doc_id;
+                        int docp = dd->doc_total_pages;
+                        printer_obj.add_printer_Docs(iddd, doci, docp);
+
+                        cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+                        //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+
+
+                        user_with_maxPriority->docs->delete_this_doc(dd);
+                        dd = user_with_maxPriority->docs->get_doc_head();
+
+                        if(dd != NULL)
+                        {
+                        lload = printer_ptr->current_load;
+                        total_Page = dd->doc_total_pages;
+                        lleft = printer_ptr->left_capacity;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        cout<<"\n\n +-+-+-+-+-+-+--+-+-+-+-+-+-+-else statement and printer is changed ";
+                        printer_ptr = printer_ptr->next;
+                        if(printer_ptr != NULL)
+                        {
+                            cout<<" in If statement "<<endl;
+                            lload = printer_ptr->current_load;
+                            total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
+                            lleft = printer_ptr->left_capacity;
+                        }
+                        else {
+                            cout<<" in else statement "<<endl;
+                            lload = 0;
+                            total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
+                            lleft = 1000000; //printer_ptr->left_capacity;
+                        }
+                    }
+                } // end of while loop where doc are not null
+
+                cout<<"\n\n\t\t\t user docs are NULL now"<<endl;
+                break;
+            } // end of if where lload < 50
+            else {
+                cout<<"------->>>>>>>>>>>>>> current printer load is greater then 50 now changing to the next printer "<<endl;
+                printer_ptr = printer_ptr->next;
+                if(printer_ptr != NULL)
+                {
+                    lload = printer_ptr->current_load;
+                    total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
+                    lleft = printer_ptr->left_capacity;
+                }
+            }
+
+        } // end of while loop where printer is null
+
+
+
+
+
+
+        /*
         while(printer_ptr != NULL)
         {
             //printer_ptr = printer_main_ptr;
-            if((current_Printer_Load > printer_ptr->current_load) && (user_with_maxPriority->docs->get_doc_head()->doc_total_pages < printer_ptr->left_capacity))
+            int lload = printer_ptr->current_load;
+            int total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
+            int lleft = printer_ptr->left_capacity;
+            if((current_Printer_Load > lload) && (total_Page  < lleft))
             {
                 current_Printer_Load = printer_ptr->current_load;
                 left_over_capacity_ofPrinter = printer_ptr->left_capacity;
+                int display_leftOver = printer_obj.get_left_over_capacity(printer_ptr);
                 max_capacity_ofPrinter = printer_ptr->max_capacity;
+                cout<<" -----------> printer id "<<printer_ptr->printer_id <<" left Cap : "<< left_over_capacity_ofPrinter <<" with load "<<current_Printer_Load <<endl;
 
-                if(current_Printer_Load < 50)
+                if((current_Printer_Load < 50)  && (total_Page  < left_over_capacity_ofPrinter))
                 {
                     document_Struct *dd = user_with_maxPriority->docs->get_doc_head();
                     while (dd != NULL) {
                         printer_obj.add_printer_Docs(printer_ptr->printer_id, dd->doc_id, dd->doc_total_pages);
                         //cout<<" user id "<<user_with_maxPriority->user_id<<" doc id "<<dd->doc_id <<" with pages "<<dd->doc_total_pages<<" is added. ";
                         //cout<<" printer id : "<<printer_ptr->printer_id<<" with max_capacity : "<<printer_ptr->max_capacity<<" with load : "<<printer_ptr->current_load<<" and left over : "<<printer_ptr->left_capacity<<endl;
+
+                     // cout<<"++ User ID \t++ Doc ID \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
+                        int load = printer_ptr->current_load;
+                       printf("++   U%d \t++   D%d \t++    P%d \t ++   %3.2f  \t  ++           %d     ++\n", user_with_maxPriority->user_id, dd->doc_id, printer_ptr->printer_id, load, display_leftOver );
+                      cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+                      //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+
                         user_with_maxPriority->docs->delete_this_doc(dd);
-                        //cout<<"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"<<endl;
-                        //cout<<"left over docs: "<<endl;
-                        //user_with_maxPriority->docs->display_doc();
-                        //cout<<"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"<<endl;
                         dd = user_with_maxPriority->docs->get_doc_head();
                     }
+                }
+                else if (printer_ptr->next == NULL)
+                {
+                    document_Struct *dd = user_with_maxPriority->docs->get_doc_head();
+                    if(dd != NULL)
+                    {
+                        printer_obj.add_printer_Docs(printer_ptr->printer_id, dd->doc_id, dd->doc_total_pages);
+                        //cout<<" user id "<<user_with_maxPriority->user_id<<" doc id "<<dd->doc_id <<" with pages "<<dd->doc_total_pages<<" is added. ";
+                        //cout<<" printer id : "<<printer_ptr->printer_id<<" with max_capacity : "<<printer_ptr->max_capacity<<" with load : "<<printer_ptr->current_load<<" and left over : "<<printer_ptr->left_capacity<<endl;
+
+                     // cout<<"++ User ID \t++ Doc ID \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
+                        int load = printer_ptr->current_load;
+                       printf("++   U%d \t++   D%d \t++    P%d \t ++   %3.2f  \t  ++           %d     ++\n", user_with_maxPriority->user_id, dd->doc_id, printer_ptr->printer_id, load, display_leftOver );
+                      cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+                      //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+
+                        user_with_maxPriority->docs->delete_this_doc(dd);
+                   }
                 }
                 //break;
             }
             printer_ptr = printer_ptr->next;
+
+            cout<<"\n\n\n choosing next printer";
         } // end of printer while loop
+
+        */
+
         //cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-        //cout<<"Now deleting user of id : "<<user_with_maxPriority->user_id<<endl;
+        cout<<"Now deleting user of id : "<<user_with_maxPriority->user_id<<endl;
         users_obj.delete_this_user(user_with_maxPriority);
-        //cout<<"user deleted "<<endl;
+        cout<<"user deleted "<<endl;
 
         main_ptr = users_obj.get_head();
 
     } // end of parent while loop
+    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
 
 }
 
@@ -592,17 +714,17 @@ int main()
     cout<<"************************************************************************************************"<<endl<<endl<<endl;
     string testline;
     string word;
-    ifstream Test ( "C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\user - Copy.txt" );
-    if ( !Test.is_open() )
+    ifstream userf ( "C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\user - Copy.txt" );
+    if ( !userf.is_open() )
     {
         cout << "There was a problem opening the file. Press any key to close." << endl;
     }
     else
     {
         cout << "User File opened successfully. Now reading data: " <<endl;
-        while( Test.good() )
+        while( userf.good() )
         {
-            getline ( Test, testline, '\n' );
+            getline ( userf, testline, '\n' );
             process_line_of_user_File(testline);
         }
         cout<<" All user data read and filled in linked-list."<<endl<<endl<<endl;
