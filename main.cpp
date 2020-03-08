@@ -1,12 +1,28 @@
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <bits/stdc++.h>
 
-
 using namespace std;
+
+
+#define userFile_Name "C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\user.txt"
+#define printerFile_Name "C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\printer.txt"
+#define OutFile_Name "C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\output.txt"
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -128,10 +144,6 @@ public:
     } // end of display function
 
 } docs_obj; // end of class document_list Class
-
-
-
-
 
 //***************************** Printer Struct & Class ********************************************
 struct printer_struct
@@ -268,14 +280,9 @@ public:
                     ptr->left_capacity = left;
                     ptr->current_load = (int)ll;
                 }
-
-                cout<<" Passing Doc id : "<<docID<<" and pages: "<<docPages<<" to printer ID: "<<ptr->printer_id<<" with load : "<<ll<<" and left capacity: "<<left<<" and current docs load : " <<endl;
-                //ptr->current_load = (ptr->current_load + ( (docPages / ptr->max_capacity) * 100 ));
-
-                //cout<<"\n current left over : ("<<left<<") With load : ("<<ll<<") with max cap : "<<max<<endl;
-
+                cout<<" Processing Doc id : "<<docID<<" and pages: "<<docPages<<" to printer ID: "<<ptr->printer_id<<" with load : "<<ll<<" and left capacity: "<<left <<endl;
                 ofstream output;
-                output.open ("C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\output.txt", ios::app );
+                output.open (OutFile_Name, ios::app );
                 if ( !output.is_open() )
                 {
                     cout << "There was a problem opening the file. Press any key to close." << endl;
@@ -311,8 +318,6 @@ public:
         } // End of while loop
     } // end of display function
 }printer_obj;
-
-
 
 //***************************** USER Struct & Class ********************************************
 struct user_struct
@@ -448,9 +453,6 @@ public:
 
 } users_obj;
 
-
-
-
 //***************************** File Lines handlers Methods ********************************************
 void process_line_of_user_File(string line)
 {
@@ -545,7 +547,6 @@ void process_line_of_printer_File(string line)
     //cout <<endl<<endl;
 }
 
-
 //***************************** Printer Spooler ********************************************
 void PrinterSpooler()
 {
@@ -557,9 +558,9 @@ void PrinterSpooler()
     //struct printer_struct *printer_main_ptr = printer_obj.get_printer_head();
     struct printer_struct *printer_ptr = printer_obj.get_printer_head();
 
-    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-    cout<<"++ User ID \t++ Doc ID \t++ DocPages \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
+//    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+//    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+//    cout<<"++ User ID \t++ Doc ID \t++ DocPages \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
     cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
 
     while (main_ptr != NULL) {
@@ -600,7 +601,7 @@ void PrinterSpooler()
                     if((lload < 50) && (total_Page < lleft))
                     {
                         ofstream output;
-                        output.open ("C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\output.txt", ios::app );
+                        output.open (OutFile_Name, ios::app );
                         if ( !output.is_open() )
                         {
                             cout << "There was a problem opening the file. Press any key to close." << endl;
@@ -617,7 +618,7 @@ void PrinterSpooler()
                         printer_obj.add_printer_Docs(iddd, doci, docp);
 
                         cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-                        //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+                        cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
 
 
                         user_with_maxPriority->docs->delete_this_doc(dd);
@@ -625,9 +626,11 @@ void PrinterSpooler()
 
                         if(dd != NULL)
                         {
+                            printer_ptr = printer_obj.get_printer_head();
                             lload = printer_ptr->current_load;
                             total_Page = dd->doc_total_pages;
                             lleft = printer_ptr->left_capacity;
+                            max_capacity_ofPrinter = printer_ptr->max_capacity;
                         }
                         else {
                             break;
@@ -670,71 +673,6 @@ void PrinterSpooler()
         } // end of while loop where printer is null
 
 
-
-
-
-
-        /*
-        while(printer_ptr != NULL)
-        {
-            //printer_ptr = printer_main_ptr;
-            int lload = printer_ptr->current_load;
-            int total_Page = user_with_maxPriority->docs->get_doc_head()->doc_total_pages;
-            int lleft = printer_ptr->left_capacity;
-            if((current_Printer_Load > lload) && (total_Page  < lleft))
-            {
-                current_Printer_Load = printer_ptr->current_load;
-                left_over_capacity_ofPrinter = printer_ptr->left_capacity;
-                int display_leftOver = printer_obj.get_left_over_capacity(printer_ptr);
-                max_capacity_ofPrinter = printer_ptr->max_capacity;
-                cout<<" -----------> printer id "<<printer_ptr->printer_id <<" left Cap : "<< left_over_capacity_ofPrinter <<" with load "<<current_Printer_Load <<endl;
-
-                if((current_Printer_Load < 50)  && (total_Page  < left_over_capacity_ofPrinter))
-                {
-                    document_Struct *dd = user_with_maxPriority->docs->get_doc_head();
-                    while (dd != NULL) {
-                        printer_obj.add_printer_Docs(printer_ptr->printer_id, dd->doc_id, dd->doc_total_pages);
-                        //cout<<" user id "<<user_with_maxPriority->user_id<<" doc id "<<dd->doc_id <<" with pages "<<dd->doc_total_pages<<" is added. ";
-                        //cout<<" printer id : "<<printer_ptr->printer_id<<" with max_capacity : "<<printer_ptr->max_capacity<<" with load : "<<printer_ptr->current_load<<" and left over : "<<printer_ptr->left_capacity<<endl;
-
-                     // cout<<"++ User ID \t++ Doc ID \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
-                        int load = printer_ptr->current_load;
-                       printf("++   U%d \t++   D%d \t++    P%d \t ++   %3.2f  \t  ++           %d     ++\n", user_with_maxPriority->user_id, dd->doc_id, printer_ptr->printer_id, load, display_leftOver );
-                      cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-                      //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-
-                        user_with_maxPriority->docs->delete_this_doc(dd);
-                        dd = user_with_maxPriority->docs->get_doc_head();
-                    }
-                }
-                else if (printer_ptr->next == NULL)
-                {
-                    document_Struct *dd = user_with_maxPriority->docs->get_doc_head();
-                    if(dd != NULL)
-                    {
-                        printer_obj.add_printer_Docs(printer_ptr->printer_id, dd->doc_id, dd->doc_total_pages);
-                        //cout<<" user id "<<user_with_maxPriority->user_id<<" doc id "<<dd->doc_id <<" with pages "<<dd->doc_total_pages<<" is added. ";
-                        //cout<<" printer id : "<<printer_ptr->printer_id<<" with max_capacity : "<<printer_ptr->max_capacity<<" with load : "<<printer_ptr->current_load<<" and left over : "<<printer_ptr->left_capacity<<endl;
-
-                     // cout<<"++ User ID \t++ Doc ID \t++ Printer ID \t++ Printer Load \t++ Printer Capacity Left \t++"<<endl;
-                        int load = printer_ptr->current_load;
-                       printf("++   U%d \t++   D%d \t++    P%d \t ++   %3.2f  \t  ++           %d     ++\n", user_with_maxPriority->user_id, dd->doc_id, printer_ptr->printer_id, load, display_leftOver );
-                      cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-                      //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-
-                        user_with_maxPriority->docs->delete_this_doc(dd);
-                   }
-                }
-                //break;
-            }
-            printer_ptr = printer_ptr->next;
-
-            cout<<"\n\n\n choosing next printer";
-        } // end of printer while loop
-
-        */
-
-        //cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<endl;
         cout<<"Now deleting user of id : "<<user_with_maxPriority->user_id<<endl;
         users_obj.delete_this_user(user_with_maxPriority);
         cout<<"user deleted "<<endl;
@@ -742,11 +680,10 @@ void PrinterSpooler()
         main_ptr = users_obj.get_head();
 
     } // end of parent while loop
-    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-    cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+    //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
+    //cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
 
 }
-
 
 
 //***************************** Program Main Function ********************************************
@@ -754,13 +691,13 @@ int main()
 {
     cout<<"************************************************************************************************"<<endl;
     cout<<"********************************* Start Linked List Program ************************************"<<endl;
-    cout<<"************************************************************************************************"<<endl<<endl<<endl;
+    cout<<"************************************************************************************************"<<endl;
     string testline;
     string word;
-    ifstream userf ( "C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\user - Copy.txt" );
+    ifstream userf ( userFile_Name );
     if ( !userf.is_open() )
     {
-        cout << "There was a problem opening the file. Press any key to close." << endl;
+        cout << "There was a problem opening the User file. Press any key to close." << endl;
     }
     else
     {
@@ -770,7 +707,7 @@ int main()
             getline ( userf, testline, '\n' );
             process_line_of_user_File(testline);
         }
-        cout<<" All user data read and filled in linked-list."<<endl<<endl<<endl;
+        cout<<" All user data read and filled in linked-list."<<endl;
     }
     cout<<"************************************************************************************************"<<endl;
     //cout<<" Now showing user linked list "<<endl;
@@ -780,7 +717,7 @@ int main()
     cout<<endl<<endl<<endl;
     cout<<"################################################################################################"<<endl;
     cout<<"################################################################################################"<<endl;
-    ifstream prters ( "C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\printer.txt" );
+    ifstream prters ( printerFile_Name );
     if ( !prters.is_open() )
     {
         cout << "There was a problem opening the file printers.txt. Press any key to close." << endl;
@@ -793,7 +730,7 @@ int main()
             getline ( prters, testline, '\n' );
             process_line_of_printer_File(testline);
         }
-        cout<<" All user data read and filled in linked-list."<<endl<<endl<<endl;
+        cout<<" All Printer data read and filled in linked-list."<<endl;
     }
     cout<<"################################################################################################"<<endl;
     //cout<<" Now showing Printers linked list "<<endl;
@@ -801,21 +738,24 @@ int main()
 
     cout<<endl<<endl<<endl;
     cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl;
-    cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl;
-    cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl;
-
-
-
     ofstream output;
-    output.open ("C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\output.txt", ios::out );
-
+    output.open (OutFile_Name , ios::out );
+    if ( !output.is_open() )
+    {
+        cout << "There was a problem opening the output file . " << endl;
+    }
+    else
+    {
+        cout << " Output File opened successfully. "<<endl;
+    }
     output.close();
-
+    cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl<<endl;
 
 
     cout<<"Now Spooling "<<endl;
     PrinterSpooler();
 
+    cout<<endl<<endl<<" Output file generated .";
     cout<<endl<<endl<<endl<<"************************************************************************************************"<<endl;
     cout<<"******************************************* Thank You ******************************************"<<endl;
     cout<<"************************************************************************************************"<<endl;
