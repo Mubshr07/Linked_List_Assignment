@@ -138,6 +138,7 @@ struct printer_struct
     int current_load ;
     int max_capacity ;
     int left_capacity ;
+    bool inifinity;
     document_list *docs;
     printer_struct *next;
 };
@@ -157,9 +158,21 @@ public:
     {
         printer_struct *tmp = new printer_struct;
         tmp->printer_id = id;
-        tmp->max_capacity = max;
+        if(max == -1)
+        {
+            tmp->max_capacity = 1000000000;
+            tmp->left_capacity = 1000000000 ;
+            tmp->inifinity = true;
+        }
+        else
+        {
+            tmp->max_capacity = max;
+            tmp->left_capacity = max ;
+            tmp->inifinity = false;
+        }
+
         tmp->current_load =0.0;
-        tmp->left_capacity = max ;
+
         tmp->docs = new document_list();
         tmp->next = NULL;
 
@@ -247,9 +260,13 @@ public:
                 float ll = ptr->current_load;
                 int left = ptr->left_capacity;
                 ll = (ll + ( (docPages *100 ) / max ));
-                ptr->left_capacity = left - docPages;
-                ptr->current_load = (int)ll;
                 left = left - docPages;
+                if(!(ptr->inifinity))
+                {
+                    ptr->left_capacity = left;
+                    ptr->current_load = (int)ll;
+                }
+
                 cout<<" Passing Doc id : "<<docID<<" and pages: "<<docPages<<" to printer ID: "<<ptr->printer_id<<" with load : "<<ll<<" and left capacity: "<<left<<" and current docs load : " <<endl;
                 //ptr->current_load = (ptr->current_load + ( (docPages / ptr->max_capacity) * 100 ));
 
@@ -582,9 +599,9 @@ void PrinterSpooler()
 
                         if(dd != NULL)
                         {
-                        lload = printer_ptr->current_load;
-                        total_Page = dd->doc_total_pages;
-                        lleft = printer_ptr->left_capacity;
+                            lload = printer_ptr->current_load;
+                            total_Page = dd->doc_total_pages;
+                            lleft = printer_ptr->left_capacity;
                         }
                         else {
                             break;
