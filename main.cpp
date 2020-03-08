@@ -8,6 +8,8 @@
 
 using namespace std;
 
+
+
 //***************************** Document Struct & Class ********************************************
 struct document_Struct
 {
@@ -271,6 +273,18 @@ public:
                 //ptr->current_load = (ptr->current_load + ( (docPages / ptr->max_capacity) * 100 ));
 
                 //cout<<"\n current left over : ("<<left<<") With load : ("<<ll<<") with max cap : "<<max<<endl;
+
+                ofstream output;
+                output.open ("C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\output.txt", ios::app );
+                if ( !output.is_open() )
+                {
+                    cout << "There was a problem opening the file. Press any key to close." << endl;
+                }
+                else
+                {
+                    output << "D"<<docID<<", P"<<printerID <<endl;
+                    output.close();
+                }
 
 
                 return 1;
@@ -585,6 +599,18 @@ void PrinterSpooler()
                     cout<<" User id : "<<user_with_maxPriority->user_id<<" -> printer id "<<printer_ptr->printer_id <<" left Cap : "<< lleft <<" with load "<<lload<<endl;
                     if((lload < 50) && (total_Page < lleft))
                     {
+                        ofstream output;
+                        output.open ("C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\output.txt", ios::app );
+                        if ( !output.is_open() )
+                        {
+                            cout << "There was a problem opening the file. Press any key to close." << endl;
+                        }
+                        else
+                        {
+                            output << "U"<<user_with_maxPriority->user_id<<", ";
+                            output.close();
+                        }
+
                         int iddd = printer_ptr->printer_id;
                         int doci = dd->doc_id;
                         int docp = dd->doc_total_pages;
@@ -777,6 +803,16 @@ int main()
     cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl;
     cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl;
     cout<<"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"<<endl;
+
+
+
+    ofstream output;
+    output.open ("C:\\Users\\Mubashir\\Documents\\Linked_List_Assignment\\output.txt", ios::out );
+
+    output.close();
+
+
+
     cout<<"Now Spooling "<<endl;
     PrinterSpooler();
 
